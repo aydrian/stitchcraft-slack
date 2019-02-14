@@ -1,0 +1,5 @@
+{
+    "name": "pokedex_icon_url",
+    "value": "https://stitch-statichosting-prod.s3.amazonaws.com/5c6580cb53ed572d37531a0e/pokedex.png",
+    "from_secret": false
+}

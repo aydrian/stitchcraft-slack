@@ -1,0 +1,6 @@
+{
+    "name": "slack",
+    "type": "http",
+    "config": {},
+    "version": 1
+}
