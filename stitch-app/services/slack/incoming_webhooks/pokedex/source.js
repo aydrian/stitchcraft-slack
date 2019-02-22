@@ -6,17 +6,29 @@ exports = async function(payload) {
   let response = {
     response_type: 'in_channel'
   };
+  console.log("text ", text);
+  const params = context.functions.execute('parseArguments', text);
+  console.log("params ", EJSON.stringify(params));
+  let query = {
+    ...(params.id && {id: context.functions.execute('padStart',params.id, 3, 0)}),
+    ...(params.name && {name: params.name}),
+    ...(params.type && {type: {$all: params.type.split(', ')}}) 
+  }
+  console.log("query ", EJSON.stringify(query));
   
-  const pokemon = await collection.findOne({id: text});
+  const pokemons = await collection.find(query).limit(params.limit ? parseInt(params.limit) : 0).toArray();
   
-  if (!pokemon) {
+  console.log(pokemons.length);
+  console.log(EJSON.stringify(pokemons));
+  
+  if (pokemons.length <= 0) {
     return {
-      text: `No Pokemon found for given ID: ${text}.`
-    }
+      text: `No Pokemon found for given query: ${text}.`
+    };
   }
 
-  response.attachments = [
-    {
+  response.attachments = pokemons.map(pokemon => {
+    return {
       'title': pokemon.name,
       'author_name': 'Pokédex',
       'author_icon': context.values.get("pokedex_icon_url"),
@@ -33,8 +45,8 @@ exports = async function(payload) {
           short: true
         }
       ]
-    }
-  ];
+    };
+  });
   
   
   return response;
